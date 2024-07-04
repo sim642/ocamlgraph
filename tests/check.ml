@@ -789,6 +789,23 @@ module Test_reduction = struct
     assert (not (mem_edge r 2 5));
     ()
 
+  (* issue #145 *)
+  let () =
+    let g = G.create () in
+    add_vertex g 1;
+    add_vertex g 2;
+    add_vertex g 3;
+    add_edge g 1 2;
+    add_edge g 2 1;
+    add_edge g 3 1;
+    add_edge g 3 2;
+    let r = O.transitive_reduction g in
+    check_included r g;
+    assert (nb_edges r = 3);
+    assert (mem_edge r 1 2);
+    assert (mem_edge r 2 1);
+    assert (mem_edge r 3 1 || mem_edge r 3 2); (* reduction is ambiguous *)
+    ()
 end
 
 let () = Format.printf "check: all tests succeeded@."
